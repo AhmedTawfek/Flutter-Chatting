@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "752895085034",
+    "project_id": "flutter-chatting-bc583",
+    "storage_bucket": "flutter-chatting-bc583.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752895085034:android:84a7ef3e46f0636823ca93",
+        "android_client_info": {
+          "package_name": "com.example.chatting"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3XMCKKJkSwv8Fb6RCbr0Rf8AgmNTApI4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

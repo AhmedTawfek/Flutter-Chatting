@@ -1,0 +1,5 @@
+{
+ "emailOrPasswordError": "Email or Password not correct.",
+ "internetError": "Please check your internet.",
+ "unknownError": "Something went wrong."
+}

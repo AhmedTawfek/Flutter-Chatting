@@ -1,0 +1,5 @@
+{
+ "emailOrPasswordError": "خطأ فى البريد او كلمة السر",
+ "internetError": "لا يوجد اتصال بالانترنت.",
+ "unknownError": "حدث خطأ"
+}

@@ -52,4 +52,10 @@ class TextStyles{
       color: ColorManager.grey,
     );
 
+  static TextStyle subtitle3 = const TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    color: ColorManager.grey,
+  );
+
 }

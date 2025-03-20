@@ -9,30 +9,41 @@ class PrimaryTextField extends StatefulWidget {
   final Icon? prefixIcon;
   final Icon? suffixIcon;
   final String? errorText;
+  final TextStyle? hintStyle;
+  final TextStyle? labelStyle;
+  final OutlineInputBorder? focusedBorder;
+  final bool? clearText;
+  final GlobalKey<PrimaryTextFieldState>? globalKey;
   final Function(bool)? onFocusChange; // Callback for validation
   final Function(String)? onTextChange;
 
-  const PrimaryTextField({
-    super.key,
+   const PrimaryTextField({
+    this.globalKey,
     required this.hintText,
+    this.clearText,
     this.prefixIcon,
     this.suffixIcon,
     this.errorText,
+    this.hintStyle,
+    this.labelStyle,
+    this.focusedBorder,
     this.onFocusChange, // Pass the validation callback
     this.onTextChange
-  });
+  }) : super(key: globalKey);
 
   @override
-  _PrimaryTextFieldState createState() => _PrimaryTextFieldState();
+  PrimaryTextFieldState createState() => PrimaryTextFieldState();
 }
 
-class _PrimaryTextFieldState extends State<PrimaryTextField> {
+class PrimaryTextFieldState extends State<PrimaryTextField> {
   final FocusNode _focusNode = FocusNode(); // Create a FocusNode
   final TextEditingController _controller = TextEditingController(); // Controller for the text field
 
   @override
   void initState() {
     super.initState();
+    //widget.globalKey?.currentState?.dispose(); // Ensure old states are cleared
+   // widget.globalKey?.currentState?.context; // Link the key to the state
     // Add a listener to the FocusNode
 
     _addFocusChangeListener();
@@ -51,6 +62,12 @@ class _PrimaryTextFieldState extends State<PrimaryTextField> {
       // We are adding a listener once the user really implements the onTextChange call back
       _controller.addListener(_onTextChange);
     }
+  }
+
+  void clearText(){
+    print("Controller text =${_controller.text}");
+    _controller.clear();
+    print("Controller text after clearing is =${_controller.text}");
   }
 
   @override
@@ -91,7 +108,7 @@ class _PrimaryTextFieldState extends State<PrimaryTextField> {
           borderSide: const BorderSide(color: ColorManager.grey3, width: 1.0),
           borderRadius: BorderRadius.circular(16.0),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: widget.focusedBorder ?? OutlineInputBorder(
           borderSide: const BorderSide(color: ColorManager.primary, width: 1.0),
           borderRadius: BorderRadius.circular(15.0),
         ),
@@ -105,8 +122,8 @@ class _PrimaryTextFieldState extends State<PrimaryTextField> {
         ),
         errorText: widget.errorText,
         hintText: widget.hintText,
-        hintStyle: TextStyles.p14Regular.copyWith(color: ColorManager.grey),
-        labelStyle: TextStyles.p14Regular.copyWith(color: ColorManager.black),
+        hintStyle: widget.hintStyle ?? TextStyles.p14Regular.copyWith(color: ColorManager.grey),
+        labelStyle: widget.labelStyle ?? TextStyles.p14Regular.copyWith(color: ColorManager.black),
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,
       ),

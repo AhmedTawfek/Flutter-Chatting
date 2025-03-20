@@ -34,7 +34,7 @@ class OnboardingScreen extends StatelessWidget {
                   isLoading: false,
                   text: "Get Started",
                   onPressed: () {
-                    Navigator.of(context).pushNamed(Routes.loginScreen);
+                    Navigator.of(context).pushNamed(Routes.chatListScreen);
                   },
                 ),
               ],

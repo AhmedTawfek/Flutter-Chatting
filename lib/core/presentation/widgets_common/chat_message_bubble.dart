@@ -33,7 +33,7 @@ class PrimaryChatMessageBubble extends StatelessWidget {
               padding: const EdgeInsets.all(15),
               child: Text(
                 messageText,
-                style: TextStyles.heading4.copyWith(
+                style: TextStyles.heading6.copyWith(
                   color: isSender ? ColorManager.onPrimary : ColorManager.black,
                 ),
               ),
@@ -44,7 +44,7 @@ class PrimaryChatMessageBubble extends StatelessWidget {
               padding: const EdgeInsets.only(left: 20),
               child: Text(
                 messageTime ?? '',
-                style: TextStyles.subtitle3,
+                style: TextStyles.subtitle5,
               ),
             )
         ],

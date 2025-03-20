@@ -14,8 +14,12 @@ class ChatListCubit extends Cubit<ChatListState>{
 
   void getChats(){
     print('Entered getChats');
-    chatRepo.getChatList(userId: 'userId1').listen((onData) {
-        print('getChats =$onData');
+    chatRepo.getChatList(userId: 'userId1').listen(
+            (chatList) {
+              for (var chat in chatList){
+                print('getChats =${chat.chatTitle}');
+              }
+
     });
   }
 

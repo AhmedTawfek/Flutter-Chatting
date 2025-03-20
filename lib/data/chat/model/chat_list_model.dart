@@ -22,14 +22,14 @@ class ChatListModel {
   /// Convert Firestore document to ChatListModel
   factory ChatListModel.fromFirestore(Map<String, dynamic> data) {
     return ChatListModel(
-      chatId: data['chatTitle'] ?? '',
-      chatTitle: data['chatTitle'] ?? '',
-      chatImageUrl: data['chatImageUrl'] ?? '',
+      chatId: data['chatId'] ?? '',
+      chatTitle: data['title'] ?? '',
+      chatImageUrl: data['imageUrl'] ?? '',
       lastModified: data['lastModified'] is Timestamp
           ? data['lastModified']
           : null,
       createdAt: data['createdAt'] is Timestamp ? data['createdAt'] : null,
-      usersIdList: List<String>.from(data['usersIdList'] ?? []),
+      usersIdList: List<String>.from(data['users'] ?? []),
     );
   }
 }

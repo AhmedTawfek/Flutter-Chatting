@@ -45,25 +45,45 @@ class _ChatListScreenState extends State<ChatListScreen> {
   Widget build(BuildContext context) {
     return SafeArea(child: Scaffold(body:
         BlocBuilder<ChatListCubit, ChatListState>(builder: (context, state) {
-      return Container(
-          color: ColorManager.background,
-          child: Column(
-            children: [
-              const Padding(padding: EdgeInsets.only(top: 10)),
-              Text('Chats', style: TextStyles.heading2),
-              const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-              Expanded(
-                  child: ListView.separated(
-                itemCount: chatListModel.length,
-                itemBuilder: (context, index) {
-                  return ChatListItem(chatListModel: chatListModel[index]);
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return const SizedBox(height: 10);
-                },
-              ))
-            ],
-          ));
+          if (state is Loading){
+            return const Center(
+              child: CircularProgressIndicator(
+                color: ColorManager.primary,
+              ),
+            );
+          }else if(state is Success){
+            return chatListWidget(
+              state.data
+            );
+          }else{
+            return const Center(
+              child: Text("Couldn't load the chat list."),
+            );
+          }
     })));
+  }
+
+  Widget chatListWidget(List<ChatListModel> chatList) {
+    return Container(
+      color: ColorManager.background,
+      child: Column(
+        children: [
+          const SizedBox(height: 10),
+          Text('Chats', style: TextStyles.heading2),
+          const SizedBox(height: 10),
+          Expanded(
+            child: ListView.separated(
+              itemCount: chatList.length,
+              itemBuilder: (context, index) {
+                return ChatListItem(chatListModel: chatList[index],onItemClicked: (chatListModel){
+                  print('Callback returned model =${chatListModel.chatTitle}');
+                },);
+              },
+              separatorBuilder: (context, index) => const SizedBox(height: 10),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

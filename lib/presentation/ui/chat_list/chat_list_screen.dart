@@ -4,6 +4,7 @@ import 'package:chatting/data/chat/model/chat_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/presentation/routing/routes.dart';
 import '../../../core/presentation/theming/styles.dart';
 import 'cubit/chat_list_cubit.dart';
 import 'cubit/chat_list_state.dart';
@@ -76,7 +77,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               itemCount: chatList.length,
               itemBuilder: (context, index) {
                 return ChatListItem(chatListModel: chatList[index],onItemClicked: (chatListModel){
-                  print('Callback returned model =${chatListModel.chatTitle}');
+                  Navigator.of(context).pushNamed(Routes.chatScreen,arguments: chatListModel);
                 },);
               },
               separatorBuilder: (context, index) => const SizedBox(height: 10),

@@ -13,12 +13,8 @@ class ChatListCubit extends Cubit<ChatListState>{
   }
 
   Future<void> getChats() async {
-
     emit(const ChatListState.loading());
-
-    await Future.delayed(const Duration(seconds: 5));
-
-    print('Entered getChats');
+    await Future.delayed(const Duration(seconds: 2));
 
     chatRepo.getChatList(userId: 'userId1').listen(
             (chatList) {
@@ -29,5 +25,4 @@ class ChatListCubit extends Cubit<ChatListState>{
 
     });
   }
-
 }

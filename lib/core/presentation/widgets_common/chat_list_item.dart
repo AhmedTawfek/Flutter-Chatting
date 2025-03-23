@@ -25,7 +25,6 @@ class ChatListItem extends StatelessWidget {
               child: InkWell(
                 borderRadius: BorderRadius.circular(10), // ✅ Ensures ripple effect respects border radius
                 onTap: () {
-                  print('Item clicked is $chatListModel');
                   onItemClicked(chatListModel);
                 },
             child: Padding(

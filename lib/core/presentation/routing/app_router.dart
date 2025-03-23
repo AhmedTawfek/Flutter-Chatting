@@ -10,6 +10,8 @@ import 'package:chatting/presentation/ui/onboarding/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../data/chat/model/chat_list_model.dart';
+
 class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     //this arguments to be passed in any screen like this ( arguments as ClassName )
@@ -29,10 +31,13 @@ class AppRouter {
             create: (context) => getItInstance<ChatListCubit>(),
             child: const ChatListScreen()));
       case Routes.chatScreen:
+        final chatListModel = arguments as ChatListModel; // Cast the arguments to ChatListModel
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                 create: (context) => getItInstance<ChatCubit>(),
-                child: const ChatScreen()));
+                child: ChatScreen(
+                  selectedChatListModel: chatListModel,
+                )));
       default:
         return null;
     }

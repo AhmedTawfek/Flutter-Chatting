@@ -1,5 +1,6 @@
 import 'package:chatting/core/presentation/widgets_common/chat_message_bubble.dart';
 import 'package:chatting/core/presentation/widgets_common/chat_message_input.dart';
+import 'package:chatting/data/chat/model/chat_list_model.dart';
 import 'package:chatting/presentation/ui/chat/cubit/chat_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +10,10 @@ import '../../../core/presentation/widgets_common/primary_text_field.dart';
 import 'cubit/chat_state.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+
+  final ChatListModel selectedChatListModel;
+
+  const ChatScreen({super.key,required this.selectedChatListModel});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -46,7 +50,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         onPressed: () => {},
                         icon: const Icon(Icons.arrow_back),
                       ),
-                      const Text('Chat Title'),
+                      Text(widget.selectedChatListModel.chatTitle),
                     ],
                   ),
                 ),

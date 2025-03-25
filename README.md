@@ -1,16 +1,15 @@
-# chatting
+# Flutter Chatting App
+I use this App to practice my Android-Native expertise in Flutter.
 
-A new Flutter project.
+# Components
+- Firestore: for the Backend.
+- Cubit: for State Managemet.
+- Clean architecture.
+- Image caching.
+- Animations.
 
-## Getting Started
+# Video
+<video src="https://github.com/user-attachments/assets/f259f32d-939e-438e-8c66-3902face02df"></video>
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Simple Animation - Video
+<video src="https://github.com/user-attachments/assets/00aabaf1-f60d-4a5a-aefc-b20c9e7e2be9"></video>

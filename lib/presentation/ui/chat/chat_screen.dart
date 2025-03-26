@@ -66,7 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     return PrimaryChatMessageBubble(
                       messageText: message.message,
                       isSender: message.senderIsMe,
-                      messageTime: message.messageTimestamp,
+                      //messageTime: message.messageTimestamp,
                     );
                   },
                 ),

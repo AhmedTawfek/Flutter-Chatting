@@ -14,7 +14,9 @@ final getItInstance = GetIt.instance;
 Future<void> setupGetIt() async {
   final sharedPreferenceInstance = await SharedPreferences.getInstance();
   getItInstance.registerFactory<LoginCubit>(() => LoginCubit());
-  getItInstance.registerFactory<ChatCubit>(() => ChatCubit(ChatState()));
+  getItInstance.registerFactory<ChatCubit>(() => ChatCubit(ChatState(),getItInstance()));
+
+  getItInstance.registerFactory<ChatRepo>(() => ChatRepo(firestoreDataSource: getItInstance(), localDataSource: getItInstance()));
 
   getItInstance.registerFactory<LocalStorageDataSource>(
       () => LocalStorageDataSource(instance: sharedPreferenceInstance));

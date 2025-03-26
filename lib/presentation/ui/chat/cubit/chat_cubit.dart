@@ -21,8 +21,8 @@ class ChatCubit extends Cubit<ChatState>{
 
     ChatMessageModel newMessage = ChatMessageModel(message: text, messageTimestamp: Timestamp.now(), senderId: 'userId1');
     final updatedMessages = List<ChatMessageModel>.from(state.messages)..add(newMessage);
-    chatRepo.
-    emit(state.copyWith(messages: updatedMessages, inputText: ''));
+
+    //emit(state.copyWith(messages: updatedMessages, inputText: ''));
   }
 
 

@@ -10,7 +10,7 @@ class ChatRepo {
 
   const ChatRepo({required this.firestoreDataSource,required this.localDataSource});
 
-  Stream<List<ChatListModel>> getChatList({required String userId}) {
+  Stream<List<ChatListModel>> getChatList({required String userId}){
     return firestoreDataSource.getChatList(userId: userId);
   }
 
@@ -18,6 +18,7 @@ class ChatRepo {
     Timestamp latestMessageTimestamp = localDataSource.getLatestMessageTimestamp(chatId);
     return firestoreDataSource.getMessages(chatId: chatId, lastMessageTimestampReceived: latestMessageTimestamp);
   }
+
 
 
 }

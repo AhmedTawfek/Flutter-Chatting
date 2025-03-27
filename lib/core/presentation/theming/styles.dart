@@ -5,43 +5,45 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TextStyles{
 
+  static String robotoFontFamily = 'Roboto';
+
   static TextStyle p14Regular = TextStyle(
     fontSize: 12.sp,
-      fontFamily: 'Roboto',
+      fontFamily: robotoFontFamily,
     fontWeight: FontWeight.normal
   );
 
   static TextStyle heading1 = TextStyle(
       fontSize: 24.sp,
-      fontFamily: 'Roboto',
+      fontFamily: robotoFontFamily,
       fontWeight: FontWeight.bold,
       color: ColorManager.black,
     );
 
   static TextStyle heading2 = TextStyle(
       fontSize: 22.sp,
-    fontFamily: 'Roboto',
+    fontFamily: robotoFontFamily,
       fontWeight: FontWeight.bold,
       color: ColorManager.black,
     );
 
   static TextStyle heading3 = TextStyle(
     fontSize: 18.sp,
-    fontFamily: 'Roboto',
+    fontFamily: robotoFontFamily,
     fontWeight: FontWeight.bold,
     color: ColorManager.black,
   );
 
   static TextStyle heading4 = TextStyle(
     fontSize: 16.sp,
-    fontFamily: 'Roboto',
+    fontFamily: robotoFontFamily,
     fontWeight: FontWeight.bold,
     color: ColorManager.black,
   );
 
   static TextStyle heading5 = TextStyle(
     fontSize: 14.sp,
-    fontFamily: 'Roboto',
+    fontFamily: robotoFontFamily,
     fontWeight: FontWeight.bold,
     color: ColorManager.black,
   );
@@ -55,14 +57,14 @@ class TextStyles{
   // Subtitle styles
   static TextStyle subtitle1 = TextStyle(
       fontSize: 18.sp,
-      fontFamily: 'Roboto',
+      fontFamily: robotoFontFamily,
       fontWeight: FontWeight.w500,
       color: ColorManager.grey,
     );
 
   static TextStyle subtitle2 = TextStyle(
       fontSize: 16.sp,
-    fontFamily: 'Roboto',
+    fontFamily: robotoFontFamily,
       fontWeight: FontWeight.normal,
       color: ColorManager.grey,
     );
@@ -81,6 +83,7 @@ class TextStyles{
 
   static TextStyle subtitle5 = TextStyle(
     fontSize: 10.sp,
+    fontFamily: robotoFontFamily,
     fontWeight: FontWeight.w400,
     color: ColorManager.grey,
   );

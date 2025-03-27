@@ -30,12 +30,13 @@ class ChatFirestoreDataSource {
   }
   
   Future<void> addMessage({required String chatId,required ChatMessageModel messageModel}) async{
-    
       await FirebaseFirestore.instance
           .collection(ApiConstants.chatsCollection)
           .doc(chatId)
           .collection(ApiConstants.messagesCollection)
           .add(messageModel.toFirestore());
-    
   }
+
+
+
 }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatting/core/data/utils/constants.dart';
 import 'package:chatting/core/presentation/theming/color_manager.dart';
 import 'package:chatting/data/chat/model/chat_message.dart';
@@ -33,8 +34,7 @@ class _PrimaryChatMessageBubbleState extends State<PrimaryChatMessageBubble> {
 
   @override
   Widget build(BuildContext context) {
-    return
-      Align(
+    return Align(
       alignment: widget.isSender ? Alignment.centerRight : Alignment.centerLeft,
       child: MenuAnchor(
         controller: _menuController,
@@ -48,34 +48,32 @@ class _PrimaryChatMessageBubbleState extends State<PrimaryChatMessageBubble> {
           ),
         ),
         menuChildren: _popUpMenu(),
-        child: InkWell(
-          onLongPress: () {
-            final box = context.findRenderObject() as RenderBox;
-            final xPosition = (box.paintBounds.topCenter / 3);
-            final yPosition = box.paintBounds.topLeft;
-            print('PaintBounds = ${box.paintBounds.top}');
-            final position = box.localToGlobal(Offset.zero);
-            print('localToGlobal = ${position}');
-            _menuController.open();
-          },
-          //onTapDown: (details) => _menuController.open(position: details.globalPosition),
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Material(
-              elevation: 2,
-              shadowColor: widget.isSender
-                  ? ColorManager.primary
-                  : ColorManager.onPrimary,
-              color: widget.isSender
-                  ? ColorManager.primary
-                  : ColorManager.onPrimary,
-              borderRadius: const BorderRadius.all(Radius.circular(15)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: Material(
+            elevation: 3,
+            shadowColor:
+                widget.isSender ? ColorManager.primary : ColorManager.onPrimary,
+            color:
+                widget.isSender ? ColorManager.primary : ColorManager.onPrimary,
+            borderRadius: const BorderRadius.all(Radius.circular(15)),
+            child: InkWell(
+              onLongPress: () {
+                final box = context.findRenderObject() as RenderBox;
+                final xPosition = (box.paintBounds.topCenter / 3);
+                final yPosition = box.paintBounds.topLeft;
+                print('PaintBounds = ${box.paintBounds.top}');
+                final position = box.localToGlobal(Offset.zero);
+                print('localToGlobal = ${position}');
+                _menuController.open();
+              },
               child: IntrinsicWidth(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (widget.messageType == Constants.textMessage)
-                      _textMessage(),
+                      _replyMessage(),
+                    _imageMessage(context),
                     _timeMessage(),
                   ],
                 ),
@@ -87,26 +85,100 @@ class _PrimaryChatMessageBubbleState extends State<PrimaryChatMessageBubble> {
     );
   }
 
-  final GlobalKey _messageKey = GlobalKey();
+  Widget _replyMessage() {
+    return InkWell(
+        onTap: () {
+          print('Reply layout is clicked');
+        },
+        child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 3, horizontal: 3),
+            child: Material(
+              borderRadius: BorderRadius.circular(15),
+              color: ColorManager.black,
+              child: Row(
+                children: [
+                  Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Reply to name',
+                            style: TextStyles.subtitle4.copyWith(
+                                fontSize: 11.sp,
+                                color: Colors.lightBlue,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          Text('Reply to message',
+                              style: TextStyles.subtitle4
+                                  .copyWith(color: Colors.white))
+                        ],
+                      ))
+                ],
+              ),
+            )));
+  }
 
-  void _openMenu(BuildContext context) {
-    // Close any existing menu first
-    _menuController.close();
+  Widget _imageMessage(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width; // Get screen width
 
-    // Add slight delay to allow menu to close properly
-    Future.delayed(const Duration(milliseconds: 50), () {
-      final renderBox =
-          _messageKey.currentContext?.findRenderObject() as RenderBox?;
-      if (renderBox != null) {
-        final position = renderBox.localToGlobal(Offset.zero);
-        // Calculate position to show menu above the message
-        final menuPosition = Offset(
-          position.dx,
-          position.dy - renderBox.size.height,
-        );
-        _menuController.open(position: menuPosition);
-      }
-    });
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 3, horizontal: 3),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: SizedBox(
+            width: screenWidth * 0.5, // Set width to 70% of screen width
+            height: 200, // Fixed max height
+            child: CachedNetworkImage(
+              imageUrl:
+                  'https://images.unsplash.com/photo-1569041032556-6485fc04aff0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+              fit: BoxFit.cover, // Ensures the image fills the space correctly
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _documentMessage() {
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.file_copy,
+              color: widget.isSender
+                  ? ColorManager.onPrimary
+                  : ColorManager.primary,
+            ),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(padding: EdgeInsets.only(top: 5)),
+                Text('Ahmed_CV.pdf',
+                    style: TextStyles.heading6.copyWith(
+                        fontSize: 11.sp,
+                        color: widget.isSender
+                            ? ColorManager.onPrimary
+                            : ColorManager.black)),
+                Text('428 KB . PDF',
+                    style: TextStyles.heading6.copyWith(
+                        fontSize: 10.sp,
+                        color: widget.isSender
+                            ? ColorManager.grey3
+                            : ColorManager.darkGrey2))
+              ],
+            )
+          ],
+        ));
   }
 
   Widget _textMessage() {

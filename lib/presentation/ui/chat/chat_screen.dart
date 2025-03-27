@@ -22,12 +22,14 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   // Initialize the GlobalKey in the State class
   final GlobalKey<PrimaryTextFieldState> _textFieldKey = GlobalKey();
+  final GlobalKey<ChatMessageInputState> _chatMessageInputKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: BlocBuilder<ChatCubit, ChatState>(builder: (context, state) {
+        body: OverlayBoundary(child:
+        BlocBuilder<ChatCubit, ChatState>(builder: (context, state) {
           print(
               'Chat input=${state.inputText} Messages list =${state.messages}');
           return Column(
@@ -57,15 +59,20 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
 
               // Chat Messages Area
-              Expanded(
-                child: ListView.builder(
+              Expanded(child:
+
+              ListView.builder(
                   reverse: true, // To show latest messages at the bottom
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
                     final message = state.messages[index];
                     return PrimaryChatMessageBubble(
+                      index: index,
                       messageText: message.message,
                       isSender: message.senderIsMe,
+                      replyCallback: (selectedMessageIndex){
+                        _chatMessageInputKey.currentState?.setReplyToMessage(state.messages[selectedMessageIndex]);
+                      },
                       //messageTime: message.messageTimestamp,
                     );
                   },
@@ -82,9 +89,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     topLeft: Radius.circular(15.0),
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: ChatMessageInput(
+                child: ChatMessageInput(
+                  chatMessageInputState: _chatMessageInputKey,
                     globalKey: _textFieldKey,
                     currentMessageInput: state.inputText,
                     onSendButtonPressed: (messageText) => {
@@ -93,11 +99,36 @@ class _ChatScreenState extends State<ChatScreen> {
                     },
                   ),
                 ),
-              ),
             ],
           );
         }),
       ),
+    ));
+  }
+}
+
+
+class OverlayBoundary extends StatefulWidget {
+  const OverlayBoundary({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  State<OverlayBoundary> createState() => _OverlayBoundaryState();
+}
+class _OverlayBoundaryState extends State<OverlayBoundary> {
+  late final OverlayEntry _overlayEntry = OverlayEntry(builder: (context) => widget.child);
+
+  @override
+  void didUpdateWidget(covariant OverlayBoundary oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _overlayEntry.markNeedsBuild();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Overlay(
+      initialEntries: [_overlayEntry],
     );
   }
 }

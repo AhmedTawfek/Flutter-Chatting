@@ -12,6 +12,8 @@ class ChatCubit extends Cubit<ChatState>{
   final ChatRepo chatRepo;
   ChatCubit(super.initialState, this.chatRepo);
 
+  int counter = 0;
+
   void sendMessage(String text) {
     print('sendMessage func tesxt=$text');
     if (text.isEmpty) return;
@@ -19,9 +21,11 @@ class ChatCubit extends Cubit<ChatState>{
     DateTime currentTimeStamp = DateTime.timestamp();
     String time = DateFormat('hh:mm a').format(currentTimeStamp);
 
-    ChatMessageModel newMessage = ChatMessageModel(message: text, messageTimestamp: Timestamp.now(), senderId: 'userId1');
+    bool senderIsMe = (counter % 2 == 0) ? true : false;
+    ChatMessageModel newMessage = ChatMessageModel(message: text, messageTimestamp: Timestamp.now(), senderId: 'userId1',senderIsMe:senderIsMe );
     final updatedMessages = List<ChatMessageModel>.from(state.messages)..add(newMessage);
 
+    counter++;
     emit(state.copyWith(messages: updatedMessages, inputText: ''));
   }
 

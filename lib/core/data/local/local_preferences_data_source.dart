@@ -1,10 +1,10 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LocalStorageDataSource{
+class LocalPreferencesDataBase{
 
   final SharedPreferences instance;
-  const LocalStorageDataSource({required this.instance});
+  const LocalPreferencesDataBase({required this.instance});
 
   Future<void> saveValue<T>(String key, T value) async {
     switch (T) {

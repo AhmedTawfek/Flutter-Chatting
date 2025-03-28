@@ -11,7 +11,7 @@ import 'cubit/chat_state.dart';
 
 class ChatScreen extends StatefulWidget {
 
-  final ChatListModel selectedChatListModel;
+  final ChatModel selectedChatListModel;
 
   const ChatScreen({super.key,required this.selectedChatListModel});
 

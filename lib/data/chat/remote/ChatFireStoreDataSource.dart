@@ -5,23 +5,26 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 class ChatFirestoreDataSource {
-  Stream<List<ChatListModel>> getChatList({required String userId}) {
+
+  Stream<List<ChatModel>> getChatList({required String userId,Timestamp? lastModified}) {
+
     return FirebaseFirestore.instance
         .collection(ApiConstants.chatsCollection)
         .where('users', arrayContains: userId)
+        .where('lastModified',isGreaterThan: lastModified)
         .orderBy("createdAt")
         .snapshots()
         .map((querySnapshot) => querySnapshot.docs
-            .map((document) => ChatListModel.fromFirestore(document.data()))
+            .map((document) => ChatModel.fromFirestore(document.data()))
             .toList());
   }
 
-  Stream<List<ChatMessageModel>> getMessages({required String chatId, required Timestamp lastMessageTimestampReceived}) {
+  Stream<List<ChatMessageModel>> getMessages({required List<String> chatIdList, required Timestamp? lastMessageTimestampReceived}) {
+
     return FirebaseFirestore.instance
-        .collection(ApiConstants.chatsCollection)
-        .doc(chatId)
-        .collection(ApiConstants.messagesCollection)
-        .where('sentAt', isGreaterThan: lastMessageTimestampReceived)
+        .collectionGroup(ApiConstants.messagesCollection)
+        .where('chatId',whereIn: chatIdList)
+        .where('lastModified', isGreaterThan: lastMessageTimestampReceived)
         .orderBy('createdAt')
         .snapshots()
         .map((querySnapshot) => querySnapshot.docs
@@ -34,7 +37,7 @@ class ChatFirestoreDataSource {
           .collection(ApiConstants.chatsCollection)
           .doc(chatId)
           .collection(ApiConstants.messagesCollection)
-          .add(messageModel.toFirestore());
+          .add(messageModel.createNewMessageToFirestore());
   }
 
 

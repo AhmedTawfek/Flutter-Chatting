@@ -6,7 +6,8 @@ class TimestampUtils{
     return Timestamp.fromDate(DateTime.parse(value));
   }
 
-  static String timestampToString(Timestamp value) {
+  static String timestampToString(Timestamp? value) {
+    value ??= getMinimumTimestamp();
     return value.toDate().toIso8601String();
   }
 

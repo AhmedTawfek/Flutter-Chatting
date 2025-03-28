@@ -1,5 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class TimestampUtils{
   static Timestamp stringToTimestamp(String value) {
@@ -13,5 +14,10 @@ class TimestampUtils{
 
   static Timestamp getMinimumTimestamp() {
     return Timestamp.fromMillisecondsSinceEpoch(0);
+  }
+
+  static String getTimeFromTimestamp(Timestamp timestamp) {
+    DateTime dateTime = timestamp.toDate();
+    return DateFormat('h:mm a').format(dateTime);
   }
 }

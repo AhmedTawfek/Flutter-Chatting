@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqlbrite/sqlbrite.dart';
 
 import '../../../data/chat/local/chat_local_data_source.dart';
+import '../../../data/chat/model/chat_list_model.dart';
 
 final getItInstance = GetIt.instance;
 
@@ -19,7 +20,12 @@ Future<void> setupGetIt() async {
   final sharedPreferenceInstance = await SharedPreferences.getInstance();
 
   getItInstance.registerFactory<LoginCubit>(() => LoginCubit());
-  getItInstance.registerFactory<ChatCubit>(() => ChatCubit(ChatState(),getItInstance()));
+
+  getItInstance.registerFactoryParam<ChatCubit, ChatModel, void>(
+        (chatModel, _) => ChatCubit(ChatState(),getItInstance(),chatModel),
+  );
+
+  //getItInstance.registerFactory<ChatCubit>(() => ChatCubit(ChatState(),getItInstance()));
 
   getItInstance.registerLazySingleton<ChatRepo>(()=>ChatRepo(firestoreDataSource: getItInstance(), localDataSource: getItInstance()));
 

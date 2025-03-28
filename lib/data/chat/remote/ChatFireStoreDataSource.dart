@@ -1,4 +1,6 @@
 import 'package:chatting/core/data/networking/api_constants.dart';
+import 'package:chatting/core/data/networking/api_result.dart';
+import 'package:chatting/core/data/networking/response_code.dart';
 import 'package:chatting/data/chat/model/chat_list_model.dart';
 import 'package:chatting/data/chat/model/chat_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,27 +21,39 @@ class ChatFirestoreDataSource {
             .toList());
   }
 
-  Stream<List<ChatMessageModel>> getMessages({required List<String> chatIdList, required Timestamp? lastMessageTimestampReceived}) {
-
+  Stream<List<ChatMessageModel>> getMessages({
+    required List<String> chatIdList,
+    required Timestamp? lastMessageTimestampReceived,
+    required String currentUserId,
+    bool skipMyUserIdMessage = true
+  }){
     return FirebaseFirestore.instance
         .collectionGroup(ApiConstants.messagesCollection)
-        .where('chatId',whereIn: chatIdList)
+        .where('chatId', whereIn: chatIdList)
         .where('lastModified', isGreaterThan: lastMessageTimestampReceived)
-        .orderBy('createdAt')
+        .orderBy('lastModified')
         .snapshots()
         .map((querySnapshot) => querySnapshot.docs
-            .map((document) => ChatMessageModel.fromFirestore(document.data()))
-            .toList());
+        .map((document) => ChatMessageModel.fromFirestore(document.data()))
+        .where((message) => skipMyUserIdMessage && message.senderId != currentUserId) // Filter out current user
+        .toList());
   }
   
-  Future<void> addMessage({required String chatId,required ChatMessageModel messageModel}) async{
-      await FirebaseFirestore.instance
-          .collection(ApiConstants.chatsCollection)
-          .doc(chatId)
-          .collection(ApiConstants.messagesCollection)
-          .add(messageModel.createNewMessageToFirestore());
+  Future<ApiResult> addMessage({required ChatMessageModel messageModel}) async{
+
+      try{
+        await FirebaseFirestore.instance
+            .collection(ApiConstants.chatsCollection)
+            .doc(messageModel.chatId)
+            .collection(ApiConstants.messagesCollection)
+            .add(messageModel.createNewMessageToFirestore());
+
+        return ApiResult.success(null);
+
+      } on Exception catch(error){
+        print('Adding a message to firestore throws error =$error');
+        return ApiResult.failure(ErrorHandler().handleError(error));
+      }
+
   }
-
-
-
 }

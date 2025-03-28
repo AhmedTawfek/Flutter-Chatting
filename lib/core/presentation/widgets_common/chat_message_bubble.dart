@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatting/core/data/utils/constants.dart';
+import 'package:chatting/core/data/utils/time_stamp_utils.dart';
 import 'package:chatting/core/presentation/theming/color_manager.dart';
 import 'package:chatting/data/chat/model/chat_message.dart';
 import 'package:flutter/material.dart';
@@ -8,21 +9,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../theming/styles.dart';
 
 class PrimaryChatMessageBubble extends StatefulWidget {
-  final String messageText;
-  final bool isSender;
-  final String? messageTime;
+  final ChatMessageModel messageModel;
+  final String myUserId;
   final int index;
-  final int messageType = Constants.textMessage;
+
+  bool isSender = false;
+
   final Function(int) replyCallback;
 
-  const PrimaryChatMessageBubble({
+  PrimaryChatMessageBubble({
     super.key,
-    required this.messageText,
-    required this.isSender,
+    required this.messageModel,
+    required this.myUserId,
     required this.index,
-    this.messageTime,
     required this.replyCallback,
-  });
+  }) {
+    isSender = (myUserId == messageModel.senderId);
+  }
 
   @override
   State<PrimaryChatMessageBubble> createState() =>
@@ -71,9 +74,15 @@ class _PrimaryChatMessageBubbleState extends State<PrimaryChatMessageBubble> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (widget.messageType == Constants.textMessage)
-                      _replyMessage(),
-                    _imageMessage(context),
+                    if (widget.messageModel.messageType ==
+                        Constants.textMessage)
+                      _textMessage(),
+                    if (widget.messageModel.messageType ==
+                        Constants.imageMessage)
+                      _imageMessage(context),
+                    if (widget.messageModel.messageType ==
+                        Constants.documentMessage)
+                      _documentMessage(),
                     _timeMessage(),
                   ],
                 ),
@@ -185,7 +194,7 @@ class _PrimaryChatMessageBubbleState extends State<PrimaryChatMessageBubble> {
     return Padding(
       padding: const EdgeInsets.only(top: 7, left: 10, right: 10),
       child: Text(
-        widget.messageText,
+        widget.messageModel.message,
         style: TextStyles.heading6.copyWith(
           color: widget.isSender ? ColorManager.onPrimary : ColorManager.black,
         ),
@@ -194,22 +203,27 @@ class _PrimaryChatMessageBubbleState extends State<PrimaryChatMessageBubble> {
   }
 
   Widget _timeMessage() {
+    bool messageUploaded =
+        (widget.messageModel.uploaded == Constants.messageUploaded);
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Padding(
-          padding:
-              const EdgeInsets.only(top: 4, right: 10, left: 10, bottom: 5),
-          child: Text(
-            widget.messageTime ?? '9:45 PM',
-            style: TextStyles.subtitle5.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 8.sp,
-                color: widget.isSender
-                    ? ColorManager.grey
-                    : ColorManager.darkGrey2),
-          ),
-        ),
+            padding: EdgeInsets.only(
+                top: 4, right: messageUploaded ? 10 : 3, left: 10, bottom: 5),
+            child: Text(
+              TimestampUtils.getTimeFromTimestamp(widget.messageModel.sentAt),
+              style: TextStyles.subtitle5.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 9.sp,
+                  color: widget.isSender
+                      ? ColorManager.grey
+                      : ColorManager.darkGrey2),
+            )),
+        if (widget.messageModel.uploaded == Constants.messageNotUploaded)
+          Padding(padding: EdgeInsets.only(right: 5,bottom: 2), child: Icon(Icons.pending_outlined,size: 18,color: widget.isSender
+              ? ColorManager.grey
+              : ColorManager.darkGrey2,)),
       ],
     );
   }

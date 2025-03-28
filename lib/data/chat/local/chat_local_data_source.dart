@@ -29,13 +29,22 @@ class ChatLocalDataSource{
   //   return TimestampUtils.stringToTimestamp(latestTimestampAsString);
   // }
 
-  Stream<List<ChatModel>> getChatList() {
+  Stream<List<ChatModel>> getChatListStream() {
     return sqliteInstance.database.asStream().asyncExpand((instance) {
       return instance
           .createQuery(SqliteDatabase.chatTable)
           .mapToList((row) => ChatModel.fromMap(row));
     });
   }
+
+  Stream<List<ChatMessageModel>> getMessagesOfChatStream() {
+    return sqliteInstance.database.asStream().asyncExpand((instance) {
+      return instance
+          .createQuery(SqliteDatabase.messagesTable, orderBy: 'sent_at DESC') // Order by sent_at in ascending order
+          .mapToList((row) => ChatMessageModel.fromLocal(row));
+    });
+  }
+
 
   Stream<List<String>> getChatIdsStream() {
     return sqliteInstance.database.asStream().asyncExpand((instance) {
@@ -79,7 +88,7 @@ class ChatLocalDataSource{
 
   Future<int> insertMessages(ChatMessageModel chatModel)async{
     final instance = await sqliteInstance.database;
-    return instance.insert(SqliteDatabase.chatTable, chatModel.toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
+    return instance.insert(SqliteDatabase.messagesTable, chatModel.toLocal(),conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<int> updateChat(ChatModel chatModel)async{
@@ -89,6 +98,17 @@ class ChatLocalDataSource{
         chatModel.toMap(),
       where: 'chat_id = ?',
     whereArgs: [chatModel.chatId]);
+  }
+
+  Future<int> setMessageAsUploaded(ChatMessageModel messageModel) async {
+    final db = await sqliteInstance.database;
+
+    return await db.update(
+      'messages', // Your table name
+      {'uploaded': 1}, // Column to update
+      where: 'message_id = ?', // Where clause to identify the message
+      whereArgs: [messageModel.messageId], // Message ID to update
+    );
   }
 
 }

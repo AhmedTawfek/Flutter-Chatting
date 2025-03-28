@@ -31,12 +31,12 @@ class AppRouter {
             create: (context) => getItInstance<ChatListCubit>(),
             child: const ChatListScreen()));
       case Routes.chatScreen:
-        final chatListModel = arguments as ChatModel; // Cast the arguments to ChatListModel
+        final selectedChatModel = arguments as ChatModel; // Cast the arguments to ChatListModel
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
-                create: (context) => getItInstance<ChatCubit>(),
+                create: (context) => getItInstance<ChatCubit>(param1: selectedChatModel),
                 child: ChatScreen(
-                  selectedChatListModel: chatListModel,
+                  selectedChatListModel: selectedChatModel,
                 )));
       default:
         return null;

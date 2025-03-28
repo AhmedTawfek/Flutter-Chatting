@@ -68,8 +68,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     final message = state.messages[index];
                     return PrimaryChatMessageBubble(
                       index: index,
-                      messageText: message.message,
-                      isSender: message.senderIsMe,
+                      messageModel: message,
+                      myUserId: 'userId1',
                       replyCallback: (selectedMessageIndex){
                         _chatMessageInputKey.currentState?.setReplyToMessage(state.messages[selectedMessageIndex]);
                       },
@@ -94,7 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     globalKey: _textFieldKey,
                     currentMessageInput: state.inputText,
                     onSendButtonPressed: (messageText) => {
-                      context.read<ChatCubit>().sendMessage(messageText),
+                      context.read<ChatCubit>().sendTextMessage(messageText),
                       _textFieldKey.currentState?.clearText()
                     },
                   ),

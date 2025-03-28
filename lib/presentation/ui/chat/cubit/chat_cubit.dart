@@ -1,36 +1,58 @@
+import 'package:chatting/core/data/utils/constants.dart';
 import 'package:chatting/core/data/utils/time_stamp_utils.dart';
+import 'package:chatting/data/chat/model/chat_list_model.dart';
 import 'package:chatting/data/chat/model/chat_message.dart';
 import 'package:chatting/presentation/ui/chat/cubit/chat_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-
+import 'package:uuid/uuid.dart';
 import '../../../../data/chat/repo/ChatRepo.dart';
 
-class ChatCubit extends Cubit<ChatState>{
+class ChatCubit extends Cubit<ChatState> {
 
   final ChatRepo chatRepo;
-  ChatCubit(super.initialState, this.chatRepo);
+  final ChatModel selectedChat;
 
-  int counter = 0;
+  ChatCubit(super.initialState, this.chatRepo,this.selectedChat){
+    print('SelectedChat is =${selectedChat.chatId}');
+    getMessagesStream();
+  }
 
-  void sendMessage(String text) {
+  void sendTextMessage(String text) {
     print('sendMessage func tesxt=$text');
     if (text.isEmpty) return;
 
-    DateTime currentTimeStamp = DateTime.timestamp();
-    String time = DateFormat('hh:mm a').format(currentTimeStamp);
+    Timestamp currentTimestamp = Timestamp.now();
+    String messageId = generateMessageId(currentTimestamp);
 
-    bool senderIsMe = (counter % 2 == 0) ? true : false;
-    ChatMessageModel newMessage = ChatMessageModel(message: text, sentAt: Timestamp.now(), senderId: 'userId1',senderIsMe:senderIsMe );
-    final updatedMessages = List<ChatMessageModel>.from(state.messages)..add(newMessage);
+    ChatMessageModel newMessage = ChatMessageModel(
+        message: text,
+        messageId: messageId,
+        messageType: Constants.textMessage,
+        uploaded: Constants.messageNotUploaded,
+        edited: 0,
+        deleted: 0,
+        replyMessageId: null,
+        senderId: 'userId1',
+        sentAt: currentTimestamp,
+        lastModified: currentTimestamp, chatId: selectedChat.chatId);
 
-    counter++;
-    emit(state.copyWith(messages: updatedMessages, inputText: ''));
+    chatRepo.addNewMessage(newMessage);
   }
 
+  String generateMessageId(Timestamp messageTimestamp) {
+    var uuid = Uuid();
+    String timestamp = TimestampUtils.timestampToString(messageTimestamp);
+    String randomId = uuid.v4();
+    print('Generated messageId = $timestamp$randomId');
+    return '$timestamp$randomId';
+  }
 
-
-
-
+  void getMessagesStream(){
+    chatRepo.getMessagesOfChat(chatId: selectedChat.chatId)
+        .listen((messagesList) {
+        emit(ChatState(messages: messagesList));
+    });
+  }
 }

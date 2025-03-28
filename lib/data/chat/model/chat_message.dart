@@ -6,34 +6,50 @@ class ChatMessageModel{
 
   final String message;
   final String? messageId = null;
-  final Timestamp messageTimestamp;
+  final Timestamp sentAt;
   final Timestamp? lastModified = null;
   final String senderId;
   final bool senderIsMe;
   final int messageType = Constants.textMessage;
   final bool edited = false;
   final bool deleted = false;
+  final String? replyMessageId = null;
 
-  const ChatMessageModel({required this.message,required this.messageTimestamp,required this.senderId,this.senderIsMe = true});
+  const ChatMessageModel({required this.message,required this.sentAt,required this.senderId,this.senderIsMe = true});
 
   factory ChatMessageModel.fromFirestore(Map<String, dynamic> data) {
     return ChatMessageModel(
       message: data['message'],
-      messageTimestamp: data['sentAt'],
+      sentAt: data['sentAt'],
       senderId: data['senderId'],
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toMap() {
     return {
       'message': message,
-      'sentAt': messageTimestamp,
+      'sent_at': sentAt,
+      'last_modified': lastModified,
+      'sender_id': senderId,
+      'message_type': messageType,
+      'edited': edited,
+      'deleted': deleted,
+      'reply_message_id': replyMessageId
+    };
+  }
+
+  Map<String, dynamic> createNewMessageToFirestore() {
+    return {
+      'message': message,
+      'sentAt': FieldValue.serverTimestamp(),
       'lastModified': FieldValue.serverTimestamp(),
       'senderId': senderId,
       'type': messageType,
       'edited': edited,
       'deleted': deleted,
-      'messageId': messageId
+      'messageId': messageId,
+      'replyMessageId': replyMessageId
     };
   }
+
 }

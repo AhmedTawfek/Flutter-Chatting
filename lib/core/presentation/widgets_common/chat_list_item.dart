@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ChatListItem extends StatelessWidget {
-  final ChatListModel chatListModel;
-  final Function(ChatListModel) onItemClicked;
+  final ChatModel chatListModel;
+  final Function(ChatModel) onItemClicked;
 
   const ChatListItem({super.key, required this.chatListModel, required this.onItemClicked});
 

@@ -22,7 +22,7 @@ class ChatCubit extends Cubit<ChatState>{
     String time = DateFormat('hh:mm a').format(currentTimeStamp);
 
     bool senderIsMe = (counter % 2 == 0) ? true : false;
-    ChatMessageModel newMessage = ChatMessageModel(message: text, messageTimestamp: Timestamp.now(), senderId: 'userId1',senderIsMe:senderIsMe );
+    ChatMessageModel newMessage = ChatMessageModel(message: text, sentAt: Timestamp.now(), senderId: 'userId1',senderIsMe:senderIsMe );
     final updatedMessages = List<ChatMessageModel>.from(state.messages)..add(newMessage);
 
     counter++;

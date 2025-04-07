@@ -35,7 +35,7 @@ class ChatFirestoreDataSource {
         .snapshots()
         .map((querySnapshot) => querySnapshot.docs
         .map((document) => ChatMessageModel.fromFirestore(document.data()))
-        .where((message) => skipMyUserIdMessage && message.senderId != currentUserId) // Filter out current user
+        //.where((message) => skipMyUserIdMessage && message.senderId != currentUserId) // Filter out current user
         .toList());
   }
   

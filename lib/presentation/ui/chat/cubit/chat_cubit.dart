@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chatting/core/data/utils/constants.dart';
 import 'package:chatting/core/data/utils/time_stamp_utils.dart';
 import 'package:chatting/data/chat/model/chat_list_model.dart';
@@ -13,6 +15,8 @@ class ChatCubit extends Cubit<ChatState> {
 
   final ChatRepo chatRepo;
   final ChatModel selectedChat;
+
+  StreamSubscription<List<ChatMessageModel>>? _messagesStream;
 
   ChatCubit(super.initialState, this.chatRepo,this.selectedChat){
     print('SelectedChat is =${selectedChat.chatId}');
@@ -50,9 +54,15 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   void getMessagesStream(){
-    chatRepo.getMessagesOfChat(chatId: selectedChat.chatId)
+    _messagesStream = chatRepo.getMessagesOfChat(chatId: selectedChat.chatId)
         .listen((messagesList) {
         emit(ChatState(messages: messagesList));
     });
+  }
+
+  @override
+  Future<void> close() {
+    _messagesStream?.cancel();
+    return super.close();
   }
 }

@@ -9,7 +9,7 @@ import '../../../core/presentation/theming/styles.dart';
 import 'cubit/chat_list_cubit.dart';
 import 'cubit/chat_list_state.dart';
 
-class ChatListScreen extends StatefulWidget {
+class ChatListScreen extends StatefulWidget   {
   const ChatListScreen({super.key});
 
   @override

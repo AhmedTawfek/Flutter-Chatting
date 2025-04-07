@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
             // You can change this to 'ar' or make it dynamic
             title: 'Flutter Demo',
             theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+                //colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
                 useMaterial3: true),
             home: const OnboardingScreen(),
             onGenerateRoute: appRouter.generateRoute,

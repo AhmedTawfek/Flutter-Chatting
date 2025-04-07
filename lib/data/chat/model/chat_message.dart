@@ -22,7 +22,7 @@ class ChatMessageModel{
   const ChatMessageModel({required this.message,required this.messageId,required this.chatId,required this.sentAt,required this.lastModified,required this.senderId,required this.messageType,required this.edited,required this.deleted,required this.replyMessageId,required this.uploaded,this.senderIsMe = true});
 
   factory ChatMessageModel.fromFirestore(Map<String, dynamic> data) {
-    print('Data is =$data');
+    print('ChatMessageModel.fromFirestore Data is =$data');
     return ChatMessageModel(
       message: data['message'],
       messageId: data['messageId'],

@@ -20,8 +20,6 @@ class ChatListCubit extends Cubit<ChatListState>{
   Future<void> getChats() async {
     emit(const ChatListState.loading());
 
-    _chatListener?.cancel();
-
     _chatListener = chatRepo.getChatList(userId: 'userId1').listen(
             (chatList) {
               for (var chat in chatList){
@@ -33,10 +31,7 @@ class ChatListCubit extends Cubit<ChatListState>{
 
   @override
   Future<void> close() {
-    print('Closed of cubit is called');
-    if (_chatListener != null) {
-      _chatListener!.cancel();
-    }
+      _chatListener?.cancel();
     return super.close();
   }
 }

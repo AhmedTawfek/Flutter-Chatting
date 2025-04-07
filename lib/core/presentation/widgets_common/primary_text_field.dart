@@ -6,8 +6,8 @@ import '../theming/color_manager.dart';
 
 class PrimaryTextField extends StatefulWidget {
   final String hintText;
-  final Icon? prefixIcon;
-  final Icon? suffixIcon;
+  final IconButton? prefixIcon;
+  final IconButton? suffixIcon;
   final String? errorText;
   final TextStyle? hintStyle;
   final TextStyle? labelStyle;

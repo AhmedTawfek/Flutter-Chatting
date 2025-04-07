@@ -37,14 +37,16 @@ class ChatLocalDataSource{
     });
   }
 
-  Stream<List<ChatMessageModel>> getMessagesOfChatStream() {
+  Stream<List<ChatMessageModel>> getMessagesOfChatStream({required String chatId}) {
     return sqliteInstance.database.asStream().asyncExpand((instance) {
       return instance
-          .createQuery(SqliteDatabase.messagesTable, orderBy: 'sent_at DESC') // Order by sent_at in ascending order
+          .createQuery(SqliteDatabase.messagesTable,
+          where: 'chat_id = ?',
+          whereArgs: [chatId],
+          orderBy: 'sent_at DESC') // Order by sent_at in ascending order
           .mapToList((row) => ChatMessageModel.fromLocal(row));
     });
   }
-
 
   Stream<List<String>> getChatIdsStream() {
     return sqliteInstance.database.asStream().asyncExpand((instance) {

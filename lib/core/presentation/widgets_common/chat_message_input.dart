@@ -4,6 +4,7 @@ import 'package:chatting/data/chat/model/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../presentation/ui/file_picker/file_picker.dart';
 import '../theming/color_manager.dart';
 
 class ChatMessageInput extends StatefulWidget {
@@ -18,7 +19,8 @@ class ChatMessageInput extends StatefulWidget {
       {this.chatMessageInputState,
       required this.onSendButtonPressed,
       required this.currentMessageInput,
-      this.globalKey}) : super(key: chatMessageInputState);
+      this.globalKey})
+      : super(key: chatMessageInputState);
 
   @override
   State<ChatMessageInput> createState() => ChatMessageInputState();
@@ -42,9 +44,10 @@ class ChatMessageInputState extends State<ChatMessageInput> {
     }
   }
 
-  void setReplyToMessage(ChatMessageModel replyToMessageModel){
+  void setReplyToMessage(ChatMessageModel replyToMessageModel) {
     widget.replyToMessage = replyToMessageModel;
-    _showReplyLayout = false; // This helps us to re-render the reply layout, if there's already an reply layout is shown
+    _showReplyLayout =
+        false; // This helps us to re-render the reply layout, if there's already an reply layout is shown
     _showOrHideReplyLayout(true);
   }
 
@@ -71,17 +74,20 @@ class ChatMessageInputState extends State<ChatMessageInput> {
               duration: const Duration(milliseconds: 300),
               curve: Curves.linear,
               margin: EdgeInsets.only(right: _showSendButton ? 8 : 0),
-              child: PrimaryTextField(
-                globalKey: widget.globalKey,
-                hintText: 'Type here ...',
-                onTextChange: (value) => {
-                  widget.currentMessageInput = value,
-                  _showOrHideSendButton(value.isNotEmpty)
-                },
-                focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: ColorManager.grey),
-                    borderRadius: BorderRadius.circular(15.0)),
-              ),
+              child:
+                  PrimaryTextField(
+                    globalKey: widget.globalKey,
+                    hintText: 'Type here ...',
+                    onTextChange: (value) => {
+                      widget.currentMessageInput = value,
+                      _showOrHideSendButton(value.isNotEmpty)
+                    },
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: ColorManager.grey),
+                        borderRadius: BorderRadius.circular(15.0)),
+                  prefixIcon: IconButton(onPressed: (){
+                    showExpandableFilePicker(context);
+                  }, icon: Icon(Icons.attach_file)))
             ),
           ),
           AnimatedSize(
@@ -106,6 +112,20 @@ class ChatMessageInputState extends State<ChatMessageInput> {
         ],
       )
     ]);
+  }
+
+  // Function to Open Expandable Bottom Sheet
+  void showExpandableFilePicker(BuildContext context) {
+    final stat =  showModalBottomSheet(
+      context: context,
+      isDismissible: true,
+      enableDrag: false,
+      useSafeArea: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ExpandableFilePickerSheet(),
+    );
+
   }
 
   Widget _replyMessageLayout() {
@@ -147,5 +167,12 @@ class ChatMessageInputState extends State<ChatMessageInput> {
           _showOrHideReplyLayout(false);
         },
         icon: const Icon(Icons.cancel, color: ColorManager.background));
+  }
+
+  void _showAttachmentBottomSheet(BuildContext context){
+    showModalBottomSheet(context: context, builder: (BuildContext context) {
+      return Container(
+      );
+    });
   }
 }

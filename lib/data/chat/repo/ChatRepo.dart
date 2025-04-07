@@ -37,8 +37,11 @@ class ChatRepo {
   }
 
   void _listenToMessages({required String userId}) async {
-    Timestamp? maxLastModified =
-        await localDataSource.getMessagesMaxLastModified();
+
+    Timestamp? maxLastModified = await localDataSource.getMessagesMaxLastModified();
+    // If we are getting the messages for first time, we need to get all messages that are stored on server
+    // But, after that we don't want to listen for the messages that we already sent, because we already added them locally.
+    bool skipMyUserMessages = (maxLastModified == null ? false : true);
 
     localDataSource.getChatIdsStream().listen((chatIdList) {
       print('getChatIdsStream =$chatIdList');
@@ -48,9 +51,12 @@ class ChatRepo {
               chatIdList: chatIdList,
               lastMessageTimestampReceived: maxLastModified,
               currentUserId: 'userId1',
-              skipMyUserIdMessage: true)
+              skipMyUserIdMessage: skipMyUserMessages)
           .listen((messagesData) {
+
         for (var messageModel in messagesData) {
+          if (skipMyUserMessages && messageModel.senderId == userId) continue;
+
           print('Received messageModel =${messageModel}');
           localDataSource.insertMessages(messageModel);
         }
@@ -64,16 +70,14 @@ class ChatRepo {
     if (messageInserted != -1) {
       ApiResult addingMessageResult = await firestoreDataSource.addMessage(messageModel: messageModel);
 
-      print('addingMessageResult =$addingMessageResult');
       if (addingMessageResult is Success){
-        print('setting to uploaded');
           localDataSource.setMessageAsUploaded(messageModel);
       }
     }
   }
 
   Stream<List<ChatMessageModel>> getMessagesOfChat({required String chatId}){
-    return localDataSource.getMessagesOfChatStream();
+    return localDataSource.getMessagesOfChatStream(chatId: chatId);
   }
 
 // Stream<List<ChatMessageModel>> getChatMessage({required String chatId}){

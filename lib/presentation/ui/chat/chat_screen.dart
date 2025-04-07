@@ -24,14 +24,38 @@ class _ChatScreenState extends State<ChatScreen> {
   final GlobalKey<PrimaryTextFieldState> _textFieldKey = GlobalKey();
   final GlobalKey<ChatMessageInputState> _chatMessageInputKey = GlobalKey();
 
+  late final AppLifecycleListener _listener;
+
+  @override
+  void initState() {
+    super.initState();
+    _listener = AppLifecycleListener(
+      onDetach: (){
+        print('State of Chat screen On detach is called');
+      },
+        onShow: (){
+        print('State of Chat screen onShow is called');
+        },
+        onHide: (){
+        print('State of Chat screen onHide is called');
+        },
+        onRestart: (){
+        print('State of Chat screen onRestart is called');
+        },
+      onStateChange: (state){
+        print('State of Chat screen is =$state');
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Color(0xFFF6F6F6),
         body: OverlayBoundary(child:
         BlocBuilder<ChatCubit, ChatState>(builder: (context, state) {
-          print(
-              'Chat input=${state.inputText} Messages list =${state.messages}');
+          print('Chat input=${state.inputText} Messages list =${state.messages}');
           return Column(
             children: [
               // Top Bar
@@ -81,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
               // Bottom Input Area
               Card(
-                elevation: 2,
+                elevation: 0,
                 color: ColorManager.background,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(

@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:chatting/core/data/networking/api_result.dart';
+import 'package:chatting/core/data/networking/response_code.dart';
+import 'package:chatting/core/data/utils/constants.dart';
 import 'package:chatting/data/chat/local/chat_local_data_source.dart';
+import 'package:chatting/data/chat/model/chat_image_model.dart';
 import 'package:chatting/data/chat/model/chat_list_model.dart';
 import 'package:chatting/data/chat/model/chat_message.dart';
 import 'package:chatting/data/chat/remote/ChatFireStoreDataSource.dart';
@@ -37,8 +40,8 @@ class ChatRepo {
   }
 
   void _listenToMessages({required String userId}) async {
-
-    Timestamp? maxLastModified = await localDataSource.getMessagesMaxLastModified();
+    Timestamp? maxLastModified =
+        await localDataSource.getMessagesMaxLastModified();
     // If we are getting the messages for first time, we need to get all messages that are stored on server
     // But, after that we don't want to listen for the messages that we already sent, because we already added them locally.
     bool skipMyUserMessages = (maxLastModified == null ? false : true);
@@ -53,7 +56,6 @@ class ChatRepo {
               currentUserId: 'userId1',
               skipMyUserIdMessage: skipMyUserMessages)
           .listen((messagesData) {
-
         for (var messageModel in messagesData) {
           if (skipMyUserMessages && messageModel.senderId == userId) continue;
 
@@ -64,20 +66,61 @@ class ChatRepo {
     });
   }
 
+  Future<ApiResult> _addMessageToFirestore(ChatMessageModel messageModel) async{
+    ApiResult addingMessageResult = await firestoreDataSource.addMessage(messageModel: messageModel);
+
+    if (addingMessageResult is Success) {
+      localDataSource.setMessageAsUploaded(messageModel);
+    }
+
+    return addingMessageResult;
+  }
+
   void addNewMessage(ChatMessageModel messageModel) async {
     final messageInserted = await localDataSource.insertMessages(messageModel);
 
     if (messageInserted != -1) {
-      ApiResult addingMessageResult = await firestoreDataSource.addMessage(messageModel: messageModel);
-
-      if (addingMessageResult is Success){
-          localDataSource.setMessageAsUploaded(messageModel);
-      }
+      _addMessageToFirestore(messageModel);
     }
   }
 
-  Stream<List<ChatMessageModel>> getMessagesOfChat({required String chatId}){
-    return localDataSource.getMessagesOfChatStream(chatId: chatId);
+  Future<ApiResult> addImageMessage(ChatMessageModel messageModel,ImageModel imageModel) async{
+    int imageInsertingResult = await localDataSource.insertImage(imageModel);
+
+    if (imageInsertingResult <= 0){
+      return ApiResult.failure(ApiError.unKnown());
+    }
+
+    int messageInsertingResult = await localDataSource.insertMessages(messageModel);
+
+    if (messageInsertingResult != -1){
+      ApiResult addingImageToStorageResult = await firestoreDataSource.addImage(imageModel: imageModel);
+
+      if (addingImageToStorageResult is Success) {
+        String imageUrlOnServer = addingImageToStorageResult.data;
+        ApiResult addingMessageResult = await _addMessageToFirestore(messageModel.copyWith(imageModel: imageModel.copyWith(serverUrl: imageUrlOnServer)));
+        return addingMessageResult;
+      }else{
+        return ApiResult.failure(ApiError.unKnown());
+      }
+    }else{
+      return ApiResult.failure(ApiError.unKnown());
+    }
+  }
+
+  Stream<List<ChatMessageModel>> getMessagesOfChat({required String chatId}) {
+
+    return localDataSource.getMessagesOfChatStream(chatId: chatId).asyncMap((data) async {
+
+      for (ChatMessageModel message in data) {
+        if (message.messageType == Constants.imageMessage) {
+          ImageModel? image = await localDataSource.getImageModelById(message.messageId);
+          message.imageModel = image;
+        }
+      }
+
+      return data;
+    });
   }
 
 // Stream<List<ChatMessageModel>> getChatMessage({required String chatId}){

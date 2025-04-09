@@ -1,5 +1,7 @@
 
 import 'package:chatting/core/data/utils/constants.dart';
+import 'package:chatting/data/chat/model/chat_file_model.dart';
+import 'package:chatting/data/chat/model/chat_image_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/data/utils/time_stamp_utils.dart';
@@ -18,8 +20,10 @@ class ChatMessageModel{
   final int deleted;
   final String? replyMessageId;
   final int uploaded;
+  ImageModel? imageModel;
+  FileDocumentModel? fileDocumentModel;
 
-  const ChatMessageModel({required this.message,required this.messageId,required this.chatId,required this.sentAt,required this.lastModified,required this.senderId,required this.messageType,required this.edited,required this.deleted,required this.replyMessageId,required this.uploaded,this.senderIsMe = true});
+  ChatMessageModel({required this.message,required this.messageId,required this.chatId,required this.sentAt,required this.lastModified,required this.senderId,required this.messageType,required this.edited,required this.deleted,required this.replyMessageId,required this.uploaded,this.senderIsMe = true,this.imageModel,this.fileDocumentModel});
 
   factory ChatMessageModel.fromFirestore(Map<String, dynamic> data) {
     print('ChatMessageModel.fromFirestore Data is =$data');
@@ -70,7 +74,6 @@ class ChatMessageModel{
     );
   }
 
-
   Map<String, dynamic> createNewMessageToFirestore() {
     return {
       'message': message,
@@ -82,8 +85,43 @@ class ChatMessageModel{
       'messageType': messageType,
       'edited': edited,
       'deleted': deleted,
-      'replyMessageId': replyMessageId
+      'replyMessageId': replyMessageId,
+      'fileUrl': messageType == Constants.imageMessage ? imageModel?.serverUrl : messageType == Constants.documentMessage ? fileDocumentModel?.serverUrl : null
     };
+  }
+
+  ChatMessageModel copyWith({
+    String? message,
+    String? messageId,
+    String? chatId,
+    Timestamp? sentAt,
+    Timestamp? lastModified,
+    String? senderId,
+    bool? senderIsMe,
+    int? messageType,
+    int? edited,
+    int? deleted,
+    String? replyMessageId,
+    int? uploaded,
+    ImageModel? imageModel,
+    FileDocumentModel? fileDocumentModel,
+  }) {
+    return ChatMessageModel(
+      message: message ?? this.message,
+      messageId: messageId ?? this.messageId,
+      chatId: chatId ?? this.chatId,
+      sentAt: sentAt ?? this.sentAt,
+      lastModified: lastModified ?? this.lastModified,
+      senderId: senderId ?? this.senderId,
+      senderIsMe: senderIsMe ?? this.senderIsMe,
+      messageType: messageType ?? this.messageType,
+      edited: edited ?? this.edited,
+      deleted: deleted ?? this.deleted,
+      replyMessageId: replyMessageId ?? this.replyMessageId,
+      uploaded: uploaded ?? this.uploaded,
+      imageModel: imageModel ?? this.imageModel,
+      fileDocumentModel: fileDocumentModel ?? this.fileDocumentModel,
+    );
   }
 
 }

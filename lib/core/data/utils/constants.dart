@@ -7,4 +7,6 @@ class Constants{
   static const int messageNotUploaded = 0;
   static const int messageUploaded = 1;
 
+  static const String imagesStoragePath = 'images';
+  static const String documentsStoragePath = 'documents';
 }

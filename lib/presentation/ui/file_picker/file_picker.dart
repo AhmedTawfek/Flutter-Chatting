@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:chatting/data/chat/model/chat_file_model.dart';
+import 'package:chatting/data/chat/model/chat_image_model.dart';
 import 'package:chatting/presentation/ui/file_picker/thumbnail_image_grid_item.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,13 +10,12 @@ import 'package:file_picker/file_picker.dart';
 
 import '../../../core/presentation/theming/color_manager.dart';
 
-class ExpandableFilePickerSheet extends StatefulWidget {
+class FilePickerSheet extends StatefulWidget {
   @override
-  _ExpandableFilePickerSheetState createState() =>
-      _ExpandableFilePickerSheetState();
+  _FilePickerSheetState createState() => _FilePickerSheetState();
 }
 
-class _ExpandableFilePickerSheetState extends State<ExpandableFilePickerSheet> {
+class _FilePickerSheetState extends State<FilePickerSheet> {
   late final AppLifecycleListener _listener;
   late ScrollController _scrollController;
   List<AssetEntity> mediaFiles = [];
@@ -53,7 +56,6 @@ class _ExpandableFilePickerSheetState extends State<ExpandableFilePickerSheet> {
     if (!hasMoreToLoad || isLoading) return;
 
     isLoading = true;
-    //setState(() => isLoading = true);
 
     final List<AssetEntity> newMediaFiles =
         await PhotoManager.getAssetListPaged(
@@ -85,10 +87,13 @@ class _ExpandableFilePickerSheetState extends State<ExpandableFilePickerSheet> {
   }
 
   Future<void> pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom,allowedExtensions: ['pdf', 'doc', 'docx']);
+
     if (result != null) {
-      String filePath = result.files.single.path!;
-      print("Selected file: $filePath");
+      PlatformFile file = result.files.single;
+      FileDocumentModel fileModel = FileDocumentModel.fromFile(file);
+      print('File Config name=${file.name} |size=${file.size} type=${file.extension.toString()}');
+      Navigator.pop(context,fileModel);
     }
   }
 
@@ -188,8 +193,11 @@ class _ExpandableFilePickerSheetState extends State<ExpandableFilePickerSheet> {
                             child: IconButton(
                               color: ColorManager.onPrimary,
                               icon: const Icon(Icons.send, size: 27),
-                              onPressed: () {
-                                print('Selected Asset is => ${selectedAsset?.id}');
+                              onPressed: () async{
+                                File? imageFile = await selectedAsset?.file;
+                                ImageModel selectedImageModel = ImageModel(messageId: '',localUrl: imageFile?.path);
+                                print('Selected Asset is => ${selectedImageModel.localUrl}');
+                                Navigator.pop(context,selectedImageModel);
                               },
                             ),
                           ))

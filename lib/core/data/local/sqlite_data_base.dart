@@ -11,8 +11,10 @@ class SqliteDatabase {
   static const chatTable = 'chat';
   static const messagesTable = 'messages';
   static const filesTable = 'files';
+  static const imagesTable = 'images';
 
   SqliteDatabase._privateConstructor();
+
   static final SqliteDatabase instance = SqliteDatabase._privateConstructor();
 
   BriteDatabase? _briteDb;
@@ -70,14 +72,24 @@ class SqliteDatabase {
     await db.execute('''
   CREATE TABLE $filesTable (
     id INTEGER NOT NULL,
+    message_id TEXT UNIQUE,
     file_url TEXT,
     file_name TEXT,
     file_size TEXT,
     file_type TEXT,
-    file_id TEXT UNIQUE,
     PRIMARY KEY(id AUTOINCREMENT)
   )
 ''');
+
+    await db.execute('''
+      CREATE TABLE $imagesTable (
+	id	INTEGER NOT NULL,
+	message_id TEXT NOT NULL UNIQUE,
+	server_url	TEXT,
+	local_url	TEXT,
+	PRIMARY KEY("id" AUTOINCREMENT)
+    )
+    ''');
   }
 
   Future<void> close() async {

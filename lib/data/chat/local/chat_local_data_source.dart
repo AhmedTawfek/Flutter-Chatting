@@ -1,12 +1,16 @@
 
 import 'package:chatting/core/data/local/local_preferences_data_source.dart';
 import 'package:chatting/core/data/local/sqlite_data_base.dart';
+import 'package:chatting/core/data/utils/constants.dart';
 import 'package:chatting/core/data/utils/time_stamp_utils.dart';
+import 'package:chatting/data/chat/model/chat_file_model.dart';
 import 'package:chatting/data/chat/model/chat_list_model.dart';
 import 'package:chatting/data/chat/model/chat_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqlbrite/sqlbrite.dart';
+
+import '../model/chat_image_model.dart';
 
 
 class ChatLocalDataSource{
@@ -38,14 +42,29 @@ class ChatLocalDataSource{
   }
 
   Stream<List<ChatMessageModel>> getMessagesOfChatStream({required String chatId}) {
-    return sqliteInstance.database.asStream().asyncExpand((instance) {
-      return instance
+    return sqliteInstance.database.asStream().asyncExpand((instance)  {
+       return instance
           .createQuery(SqliteDatabase.messagesTable,
           where: 'chat_id = ?',
           whereArgs: [chatId],
-          orderBy: 'sent_at DESC') // Order by sent_at in ascending order
+          orderBy: 'sent_at DESC')
           .mapToList((row) => ChatMessageModel.fromLocal(row));
     });
+  }
+
+  Future<ImageModel?> getImageModelById(String imageId) async {
+    final db = await sqliteInstance.database;
+
+    final result = await db.query(
+      SqliteDatabase.imagesTable,
+      where: 'message_id = ?',
+      whereArgs: [imageId],
+    );
+
+    if (result.isNotEmpty) {
+      return ImageModel.fromLocal(result.first);
+    }
+    return null;
   }
 
   Stream<List<String>> getChatIdsStream() {
@@ -88,9 +107,19 @@ class ChatLocalDataSource{
     return instance.insert(SqliteDatabase.chatTable, chatModel.toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<int> insertMessages(ChatMessageModel chatModel)async{
+  Future<int> insertMessages(ChatMessageModel chatModel) async{
     final instance = await sqliteInstance.database;
     return instance.insert(SqliteDatabase.messagesTable, chatModel.toLocal(),conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<int> insertImage(ImageModel imageModel) async{
+    final instance = await sqliteInstance.database;
+    return instance.insert(SqliteDatabase.imagesTable, imageModel.toLocal(),conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<int> insertFile(FileDocumentModel fileModel) async{
+    final instance = await sqliteInstance.database;
+    return instance.insert(SqliteDatabase.filesTable, fileModel.toLocal(),conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<int> updateChat(ChatModel chatModel)async{
@@ -112,5 +141,7 @@ class ChatLocalDataSource{
       whereArgs: [messageModel.messageId], // Message ID to update
     );
   }
+
+
 
 }

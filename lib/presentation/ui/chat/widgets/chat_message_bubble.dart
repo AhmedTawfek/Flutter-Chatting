@@ -1,12 +1,16 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatting/core/data/utils/constants.dart';
 import 'package:chatting/core/data/utils/time_stamp_utils.dart';
 import 'package:chatting/core/presentation/theming/color_manager.dart';
+import 'package:chatting/data/chat/model/chat_file_model.dart';
+import 'package:chatting/data/chat/model/chat_image_model.dart';
 import 'package:chatting/data/chat/model/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../theming/styles.dart';
+import '../../../../core/presentation/theming/styles.dart';
 
 class PrimaryChatMessageBubble extends StatefulWidget {
   final ChatMessageModel messageModel;
@@ -74,15 +78,15 @@ class _PrimaryChatMessageBubbleState extends State<PrimaryChatMessageBubble> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (widget.messageModel.messageType ==
-                        Constants.textMessage)
+                    if (widget.messageModel.messageType == Constants.textMessage)
                       _textMessage(),
-                    if (widget.messageModel.messageType ==
-                        Constants.imageMessage)
+
+                    if (widget.messageModel.messageType == Constants.imageMessage)
                       _imageMessage(context),
-                    if (widget.messageModel.messageType ==
-                        Constants.documentMessage)
-                      _documentMessage(),
+
+                    if (widget.messageModel.messageType == Constants.documentMessage)
+                      _documentMessage(widget.messageModel.fileDocumentModel!),
+
                     _timeMessage(),
                   ],
                 ),
@@ -143,18 +147,26 @@ class _PrimaryChatMessageBubbleState extends State<PrimaryChatMessageBubble> {
           child: SizedBox(
             width: screenWidth * 0.5, // Set width to 70% of screen width
             height: 200, // Fixed max height
-            child: CachedNetworkImage(
-              imageUrl:
-                  'https://images.unsplash.com/photo-1569041032556-6485fc04aff0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-              fit: BoxFit.cover, // Ensures the image fills the space correctly
-            ),
+            child: _buildImage(widget.messageModel.imageModel),
           ),
         ),
       ),
     );
   }
 
-  Widget _documentMessage() {
+  Widget _buildImage(ImageModel? imageModel){
+    if (imageModel != null && imageModel.localUrl != null){
+      File imageFile = File(imageModel.localUrl!);
+      return Image.file(imageFile,fit: BoxFit.cover);
+    }else{
+      return CachedNetworkImage(
+        imageUrl: 'https://images.unsplash.com/photo-1569041032556-6485fc04aff0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        fit: BoxFit.cover, // Ensures the image fills the space correctly
+      );
+    }
+  }
+
+  Widget _documentMessage(FileDocumentModel fileModel) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: Row(
@@ -172,13 +184,15 @@ class _PrimaryChatMessageBubbleState extends State<PrimaryChatMessageBubble> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(padding: EdgeInsets.only(top: 5)),
-                Text('Ahmed_CV.pdf',
+                Text(fileModel.fileName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyles.heading6.copyWith(
                         fontSize: 11.sp,
                         color: widget.isSender
                             ? ColorManager.onPrimary
                             : ColorManager.black)),
-                Text('428 KB . PDF',
+                Text('${fileModel.fileSize} • ${fileModel.fileType}',
                     style: TextStyles.heading6.copyWith(
                         fontSize: 10.sp,
                         color: widget.isSender

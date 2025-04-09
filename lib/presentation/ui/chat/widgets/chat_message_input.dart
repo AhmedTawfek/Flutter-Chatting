@@ -1,17 +1,21 @@
 import 'package:chatting/core/presentation/theming/styles.dart';
 import 'package:chatting/core/presentation/widgets_common/primary_text_field.dart';
+import 'package:chatting/data/chat/model/chat_file_model.dart';
+import 'package:chatting/data/chat/model/chat_image_model.dart';
 import 'package:chatting/data/chat/model/chat_message.dart';
+import 'package:chatting/data/chat/model/chat_message_interface.dart';
+import 'package:chatting/data/chat/model/chat_message_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../presentation/ui/file_picker/file_picker.dart';
-import '../theming/color_manager.dart';
+import '../../file_picker/file_picker.dart';
+import '../../../../core/presentation/theming/color_manager.dart';
 
 class ChatMessageInput extends StatefulWidget {
   String currentMessageInput;
   ChatMessageModel? replyToMessage;
 
-  final Function(String)? onSendButtonPressed;
+  final Function(ChatInterface)? onSendButtonPressed;
   final GlobalKey<PrimaryTextFieldState>? globalKey;
   final GlobalKey<ChatMessageInputState>? chatMessageInputState;
 
@@ -102,7 +106,7 @@ class ChatMessageInputState extends State<ChatMessageInput> {
                     child: IconButton(
                       icon: const Icon(Icons.send),
                       onPressed: () {
-                        widget.onSendButtonPressed!(widget.currentMessageInput);
+                        widget.onSendButtonPressed!(MessageText(text: widget.currentMessageInput));
                         // Handle button press
                       },
                     ),
@@ -115,17 +119,26 @@ class ChatMessageInputState extends State<ChatMessageInput> {
   }
 
   // Function to Open Expandable Bottom Sheet
-  void showExpandableFilePicker(BuildContext context) {
-    final stat =  showModalBottomSheet(
+  Future<void> showExpandableFilePicker(BuildContext context) async {
+
+    final selectedMediaResult =  showModalBottomSheet(
       context: context,
       isDismissible: true,
       enableDrag: false,
       useSafeArea: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => ExpandableFilePickerSheet(),
+      builder: (context) => FilePickerSheet(),
     );
 
+    final selectedMedia = await selectedMediaResult;
+    if (selectedMedia is ImageModel){
+      // That means user selected an image.
+      widget.onSendButtonPressed!(selectedMedia);
+    }else if(selectedMedia is FileDocumentModel){
+      // That means user selected an document file.
+      widget.onSendButtonPressed!(selectedMedia);
+    }
   }
 
   Widget _replyMessageLayout() {
@@ -167,12 +180,5 @@ class ChatMessageInputState extends State<ChatMessageInput> {
           _showOrHideReplyLayout(false);
         },
         icon: const Icon(Icons.cancel, color: ColorManager.background));
-  }
-
-  void _showAttachmentBottomSheet(BuildContext context){
-    showModalBottomSheet(context: context, builder: (BuildContext context) {
-      return Container(
-      );
-    });
   }
 }

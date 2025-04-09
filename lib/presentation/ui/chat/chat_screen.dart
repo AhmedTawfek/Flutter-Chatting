@@ -1,5 +1,5 @@
-import 'package:chatting/core/presentation/widgets_common/chat_message_bubble.dart';
-import 'package:chatting/core/presentation/widgets_common/chat_message_input.dart';
+import 'package:chatting/presentation/ui/chat/widgets/chat_message_bubble.dart';
+import 'package:chatting/presentation/ui/chat/widgets/chat_message_input.dart';
 import 'package:chatting/data/chat/model/chat_list_model.dart';
 import 'package:chatting/presentation/ui/chat/cubit/chat_cubit.dart';
 import 'package:flutter/material.dart';
@@ -117,8 +117,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   chatMessageInputState: _chatMessageInputKey,
                     globalKey: _textFieldKey,
                     currentMessageInput: state.inputText,
-                    onSendButtonPressed: (messageText) => {
-                      context.read<ChatCubit>().sendTextMessage(messageText),
+                    onSendButtonPressed: (chatInterface) => {
+                      context.read<ChatCubit>().prepareMessage(chatInterface),
                       _textFieldKey.currentState?.clearText()
                     },
                   ),

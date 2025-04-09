@@ -1,5 +1,5 @@
 import 'package:chatting/core/presentation/theming/color_manager.dart';
-import 'package:chatting/core/presentation/widgets_common/chat_list_item.dart';
+import 'package:chatting/presentation/ui/chat_list/widgets/chat_list_item.dart';
 import 'package:chatting/data/chat/model/chat_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

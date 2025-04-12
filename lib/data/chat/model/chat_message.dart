@@ -3,6 +3,7 @@ import 'package:chatting/core/data/utils/constants.dart';
 import 'package:chatting/data/chat/model/chat_file_model.dart';
 import 'package:chatting/data/chat/model/chat_image_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../../core/data/utils/time_stamp_utils.dart';
 
@@ -38,7 +39,9 @@ class ChatMessageModel{
       edited: data['edited'] ?? 0,
       deleted: data['deleted'] ?? 0,
       replyMessageId: data['replyMessageId'] ?? '',
-      uploaded: Constants.messageUploaded
+      uploaded: Constants.messageUploaded,
+      imageModel: (data['messageType'] == Constants.imageMessage) ? ImageModel(messageId: data['messageId'],serverUrl: data['fileUrl']) : null,
+      fileDocumentModel: (data['messageType'] == Constants.documentMessage) ? FileDocumentModel(messageId: data['messageId'],serverUrl: data['fileUrl']) : null,
     );
   }
 

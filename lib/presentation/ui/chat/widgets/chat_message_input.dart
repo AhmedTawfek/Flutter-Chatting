@@ -50,8 +50,7 @@ class ChatMessageInputState extends State<ChatMessageInput> {
 
   void setReplyToMessage(ChatMessageModel replyToMessageModel) {
     widget.replyToMessage = replyToMessageModel;
-    _showReplyLayout =
-        false; // This helps us to re-render the reply layout, if there's already an reply layout is shown
+    _showReplyLayout = false; // This helps us to re-render the reply layout, if there's already an reply layout is shown
     _showOrHideReplyLayout(true);
   }
 

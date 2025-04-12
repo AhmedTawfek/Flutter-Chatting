@@ -9,4 +9,8 @@ class Constants{
 
   static const String imagesStoragePath = 'images';
   static const String documentsStoragePath = 'documents';
+
+  static const int fileIsDownloading = 0;
+  static const int fileDownloaded = 1;
+  static const int fileFailedToDownload = -1;
 }

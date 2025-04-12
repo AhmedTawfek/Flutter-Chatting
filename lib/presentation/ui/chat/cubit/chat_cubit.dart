@@ -64,7 +64,7 @@ class ChatCubit extends Cubit<ChatState> {
     String messageId = generateMessageId(currentTimestamp);
 
     ChatMessageModel newMessage = ChatMessageModel(
-        imageModel: imageModel,
+        imageModel: imageModel.copyWith(messageId: messageId),
         message: 'Image',
         messageId: messageId,
         messageType: Constants.imageMessage,
@@ -84,8 +84,10 @@ class ChatCubit extends Cubit<ChatState> {
     Timestamp currentTimestamp = Timestamp.now();
     String messageId = generateMessageId(currentTimestamp);
 
+    FileDocumentModel fileDocumentModel = fileModel.copyWith(messageId: messageId);
+
     ChatMessageModel newMessage = ChatMessageModel(
-        fileDocumentModel: fileModel,
+        fileDocumentModel: fileDocumentModel,
         message: 'File',
         messageId: messageId,
         messageType: Constants.documentMessage,
@@ -95,10 +97,10 @@ class ChatCubit extends Cubit<ChatState> {
         replyMessageId: null,
         senderId: 'userId1',
         sentAt: currentTimestamp,
-        lastModified: currentTimestamp, chatId: selectedChat.chatId);
+        lastModified: currentTimestamp,
+        chatId: selectedChat.chatId);
 
-    emit(ChatState(messages: [newMessage]));
-    //chatRepo.addNewMessage(newMessage);
+    chatRepo.addDocumentFileMessage(newMessage,fileDocumentModel);
   }
 
   String generateMessageId(Timestamp messageTimestamp) {

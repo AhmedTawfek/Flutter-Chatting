@@ -67,6 +67,21 @@ class ChatLocalDataSource{
     return null;
   }
 
+  Future<FileDocumentModel?> getDocumentFileModelById(String fileId) async {
+    final db = await sqliteInstance.database;
+
+    final result = await db.query(
+      SqliteDatabase.filesTable,
+      where: 'message_id = ?',
+      whereArgs: [fileId],
+    );
+
+    if (result.isNotEmpty) {
+      return FileDocumentModel.fromLocal(result.first);
+    }
+    return null;
+  }
+
   Stream<List<String>> getChatIdsStream() {
     return sqliteInstance.database.asStream().asyncExpand((instance) {
       return instance

@@ -1,4 +1,5 @@
 
+import 'package:chatting/data/chat/model/chat_message.dart';
 import 'package:chatting/data/chat/model/chat_message_interface.dart';
 
 class ImageModel implements ChatInterface{
@@ -11,6 +12,10 @@ class ImageModel implements ChatInterface{
     this.serverUrl,
     this.localUrl,
   });
+
+  // factory ImageModel.fromChatMessage(ChatMessageModel messageModel){
+  //   return ImageModel(messageId: messageModel.messageId,serverUrl: )
+  // }
 
   factory ImageModel.fromLocal(Map<String, dynamic> map) {
     return ImageModel(

@@ -73,10 +73,12 @@ class SqliteDatabase {
   CREATE TABLE $filesTable (
     id INTEGER NOT NULL,
     message_id TEXT UNIQUE,
-    file_url TEXT,
+    server_url TEXT,
+    local_url TEXT,
     file_name TEXT,
     file_size TEXT,
     file_type TEXT,
+    file_download_state INTEGER,
     PRIMARY KEY(id AUTOINCREMENT)
   )
 ''');

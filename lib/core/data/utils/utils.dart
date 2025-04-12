@@ -10,3 +10,26 @@ String convertSizeToString(int bytes, {int decimals = 1}) {
 
   return '${convertedSize.toStringAsFixed(decimals)} ${units[unitIndex]}';
 }
+
+String getFileExtensionFromContentType(String? contentType) {
+  switch (contentType) {
+    case 'application/pdf':
+      return '.pdf';
+    case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+      return '.xlsx';
+    case 'application/vnd.ms-excel':
+      return '.xls';
+    case 'image/jpeg':
+      return '.jpg';
+    case 'image/png':
+      return '.png';
+    case 'text/plain':
+      return '.txt';
+    case 'application/msword':
+      return '.doc';
+    case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+      return '.docx';
+    default:
+      return '.bin'; // fallback extension
+  }
+}

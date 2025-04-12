@@ -65,6 +65,9 @@ class _PrimaryChatMessageBubbleState extends State<PrimaryChatMessageBubble> {
                 widget.isSender ? ColorManager.primary : ColorManager.onPrimary,
             borderRadius: const BorderRadius.all(Radius.circular(15)),
             child: InkWell(
+              onTap: (){
+
+              },
               onLongPress: () {
                 final box = context.findRenderObject() as RenderBox;
                 final xPosition = (box.paintBounds.topCenter / 3);
@@ -160,17 +163,25 @@ class _PrimaryChatMessageBubbleState extends State<PrimaryChatMessageBubble> {
       return Image.file(imageFile,fit: BoxFit.cover);
     }else{
       return CachedNetworkImage(
-        imageUrl: 'https://images.unsplash.com/photo-1569041032556-6485fc04aff0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        imageUrl: imageModel?.serverUrl??'https://images.unsplash.com/photo-1569041032556-6485fc04aff0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         fit: BoxFit.cover, // Ensures the image fills the space correctly
       );
     }
   }
 
   Widget _documentMessage(FileDocumentModel fileModel) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: screenWidth * 0.6,
+          // No minWidth; it will take the content's width
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Icons.file_copy,
@@ -178,31 +189,41 @@ class _PrimaryChatMessageBubbleState extends State<PrimaryChatMessageBubble> {
                   ? ColorManager.onPrimary
                   : ColorManager.primary,
             ),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(padding: EdgeInsets.only(top: 5)),
-                Text(fileModel.fileName,
+            const SizedBox(width: 5),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 5),
+                  Text(
+                    fileModel.fileName ?? 'Unknown',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyles.heading6.copyWith(
-                        fontSize: 11.sp,
-                        color: widget.isSender
-                            ? ColorManager.onPrimary
-                            : ColorManager.black)),
-                Text('${fileModel.fileSize} • ${fileModel.fileType}',
+                      fontSize: 11.sp,
+                      color: widget.isSender
+                          ? ColorManager.onPrimary
+                          : ColorManager.black,
+                    ),
+                  ),
+                  Text(
+                    '${fileModel.fileSize ?? ""} • ${fileModel.fileType ?? ""}',
                     style: TextStyles.heading6.copyWith(
-                        fontSize: 10.sp,
-                        color: widget.isSender
-                            ? ColorManager.grey3
-                            : ColorManager.darkGrey2))
-              ],
-            )
+                      fontSize: 10.sp,
+                      color: widget.isSender
+                          ? ColorManager.grey3
+                          : ColorManager.darkGrey2,
+                    ),
+                  )
+                ],
+              ),
+            ),
           ],
-        ));
+        ),
+      ),
+    );
   }
+
 
   Widget _textMessage() {
     return Padding(

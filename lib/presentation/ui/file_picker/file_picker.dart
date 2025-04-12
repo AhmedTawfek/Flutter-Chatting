@@ -91,7 +91,7 @@ class _FilePickerSheetState extends State<FilePickerSheet> {
 
     if (result != null) {
       PlatformFile file = result.files.single;
-      FileDocumentModel fileModel = FileDocumentModel.fromFile(file);
+      FileDocumentModel fileModel = FileDocumentModel.fromPlatformFile(file);
       print('File Config name=${file.name} |size=${file.size} type=${file.extension.toString()}');
       Navigator.pop(context,fileModel);
     }

@@ -66,6 +66,8 @@ dependencies:
   photo_manager: ^3.0.0  # For accessing gallery photos/videos
   file_picker: ^8.0.0     # For picking other files
   permission_handler: ^11.0.0 # For permissions
+  file_saver: ^0.2.14
+  path_provider: ^2.1.5
 
 
 
